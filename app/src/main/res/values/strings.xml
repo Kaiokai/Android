@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Android搭建OPENCV</string>
+    <string name="button01">connect</string>
+    <string name="button02">disconnect</string>
+    <string name="button03">send</string>
+    <string name="button04">getmes</string>
+</resources>
