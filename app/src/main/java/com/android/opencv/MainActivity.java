@@ -3,6 +3,7 @@ package com.android.opencv;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 
 //import org.opencv.core.Core;
+import org.opencv.android.JavaCameraView;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvException;
@@ -11,6 +12,7 @@ import org.opencv.core.Mat;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -20,7 +22,9 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -30,14 +34,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -60,6 +72,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     socketDemo mysocket = new socketDemo();
     Button btnConnect, btnDisConnect, btnSend, btnGetMes;
     boolean isSend = false;
+
+    // 时间
+    public String nowTime = "0";
+    public String getTimes = "0";
 
     /**
      * Called when the activity is first created.
@@ -166,6 +182,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     //NDK对每一帧数据进行操作
 //    public static native void nativeRgba(long jrgba);
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         // 单帧从相机回调 gray()返回带有帧的单通道灰度级消光片 rgba()返回带有帧的RGBA Mat
         mRgba = inputFrame.rgba();
@@ -197,11 +214,36 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
             // 生成字符串 加上头尾
             // String pMes = pstart + Arrays.toString(bytes) + pend;
             // 调用发送函数
-             mysocket.sendMesToServer(pstart+toByte()+pend);
+            // mysocket.sendMesToServer(pstart+toByte()+pend);
+            // 如果当前获取的时间和上一秒保存的时间不同 则执行 每次间隔为1s
+            if(!getTime().equals(nowTime)){
+                // Log.i("kaio mes",getTime()+" "+nowTime);
+                // mysocket.sendMesToServer(getTime()+ " " +nowTime+ " " +getTime().equals(nowTime));
+
+                // 发送图像
+                mysocket.sendMesToServer(pstart+toByte()+pend);
+                // 保存时间 用以判断间隔
+                nowTime = getTime();
+            }
         }
 
         return mRgba;
     }
+
+    // 获取当前时间
+    public String getTime() {
+        long timeStamp = System.currentTimeMillis();
+        String time = stampToDate(timeStamp);
+        return time;
+    }
+    // 时间戳转为时间
+    public String stampToDate(long timeMillis){
+        // 设置格式 原始为"SimpleDateFormat("yyyy-MM-dd HH:mm:ss")"
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("ss");
+        Date date = new Date(timeMillis);
+        return simpleDateFormat.format(date);
+    }
+
     // bitmap转img转byte
     public String toByte(){
         // 把Map类型的mRgba转成Bitmap类型
