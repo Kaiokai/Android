@@ -1,8 +1,6 @@
 package com.android.opencv;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -13,20 +11,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 
-public class socketDemo {
-    private String readByteCache = ""; //缓存
-    private String flac_Start = "|start|";
-    private String flac_End = "|end|";
-    private boolean w = true;
-    private boolean socketRun = false; // 是否正在运行socket
-    private int socketCache = 100000;
-
-
-    
+public class socketDemobak {
     // 主线程Handler 用于将从服务器获取的消息显示出来
     public Handler mMainHandler;
     // Socket变量
