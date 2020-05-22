@@ -20,7 +20,10 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
+import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.os.Build;
@@ -82,7 +85,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     public ImageView iv;
 
     // SurfaceView
-    public SurfaceView mysv;
+    public MySurfaceView mysv;
     public SurfaceHolder mholder;
     public boolean isRunning;
     public Bitmap bmpStatus;
@@ -121,7 +124,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         btnSend = findViewById(R.id.send);
         btnGetMes = findViewById(R.id.getmes);
         iv = findViewById(R.id.imageView);
-        mysv = findViewById(R.id.surfaceView);
+        mysv = findViewById(R.id.mysurfaceview);
         mholder = mysv.getHolder();
         bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.girl);
 
@@ -129,6 +132,9 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         mholder.addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
+                // mysv.setZOrderOnTop(true);
+                mholder.setFormat(PixelFormat.TRANSLUCENT);
+                mysv.setZOrderOnTop(true);
                 isRunning = true;
                 SvRun(bitmap);
             }
@@ -201,11 +207,11 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     public void SvRun(Bitmap bmp) {
         while (isRunning) {
             if (bmpStatus != bmp) {
-                try {
-                    Thread.sleep(50);
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    Thread.sleep(50);
+//                }catch (Exception e) {
+//                    e.printStackTrace();
+//                }
                 Bitmap a = Bitmap.createScaledBitmap(bmp,400,400,true);
                 doDraw(a);
             }
@@ -214,6 +220,8 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     }
     public void doDraw(Bitmap bmp) {
         canvas = mholder.lockCanvas();
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        // canvas.drawColor(Color.TRANSPARENT);
         canvas.drawBitmap(bmp,0,0,null);
         mholder.unlockCanvasAndPost(canvas);
     }
@@ -313,17 +321,19 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
                 e.printStackTrace();
             }
             // 显示图片--只能在创建View的线程中修改View
-            Bitmap bitmap = variableClass.socketClientClass.response;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if(bitmap!=null) {
-                        // iv.setImageBitmap(bitmap);
-                        isRunning = true;
-                        SvRun(bitmap);
+            if (variableClass.socketClientClass.response != null) {
+                Bitmap bitmap = variableClass.socketClientClass.response;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(bitmap!=null) {
+                            // iv.setImageBitmap(bitmap);
+                            isRunning = true;
+                            SvRun(bitmap);
+                        }
                     }
-                }
-            });
+                });
+            }
 
 //            // 获取服务器Png的Bytes
 //            mysocket.getServerBytes();

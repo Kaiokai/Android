@@ -10,14 +10,26 @@
 
         <org.opencv.android.JavaCameraView
             android:id="@+id/fd_activity_surface_view"
-            android:layout_width="332dp"
-            android:layout_height="419dp"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
+
+        <com.android.opencv.MySurfaceView
+            android:id="@+id/mysurfaceview"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/send"
+            app:layout_constraintHorizontal_bias="0.694"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="MissingConstraints" />
 
         <Button
             android:id="@+id/connect"
@@ -107,17 +119,6 @@
             app:layout_constraintTop_toTopOf="@+id/guideline4"
             app:layout_constraintVertical_bias="0.483"
             app:srcCompat="?android:attr/listChoiceIndicatorSingle" />
-
-        <SurfaceView
-            android:id="@+id/surfaceView"
-            android:layout_width="248dp"
-            android:layout_height="256dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.712"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.554" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
