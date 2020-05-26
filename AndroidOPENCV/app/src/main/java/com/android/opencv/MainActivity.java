@@ -45,7 +45,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.Executors;
 
 import com.weteoes.variableClass;
@@ -130,8 +132,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         mymap = findViewById(R.id.mymap);
         bholder = mymap.getHolder();
         paint = new Paint();
-        mapWidth = mymap.getWidth();
-        mapHeight = mymap.getHeight();
 
         //bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.girl);
 
@@ -228,7 +228,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         btnDisConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mysocket.disConnect();
+                // mysocket.disConnect();
             }
         });
     }
@@ -243,15 +243,15 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         }
     }
     // 小地图
-    public void SvRun_map(Bitmap bmp) {
-        isRunning_map = true;
-        while (isRunning_map) {
-            if (bmpStatus_map != bmp) {
-                doDraw_map(bmp);
-            }
-            isRunning_map = false;
-        }
-    }
+//    public void SvRun_map(Bitmap bmp) {
+//        isRunning_map = true;
+//        while (isRunning_map) {
+//            if (bmpStatus_map != bmp) {
+//                doDraw_map(bmp);
+//            }
+//            isRunning_map = false;
+//        }
+//    }
 
     //    public void SvRuns(Bitmap bmp) {
 //        while (isRunning) {
@@ -293,22 +293,25 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         mholder.unlockCanvasAndPost(canvas);
     }
     // 小地图
-    public void doDraw_map(Bitmap bmp) {
-        canvas_map = bholder.lockCanvas();
-        // canvas_map.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        canvas_map.drawBitmap(bmp, 0, 0, null);
-        bholder.unlockCanvasAndPost(canvas_map);
-    }
+//    public void doDraw_map(Bitmap bmp) {
+//        canvas_map = bholder.lockCanvas();
+//        // canvas_map.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+//        canvas_map.drawBitmap(bmp, 0, 0, null);
+//        bholder.unlockCanvasAndPost(canvas_map);
+//    }
     // 绘制RT
-    public void paintRT(float x, float y) {
+    public void paintRT() {
         canvas_map = bholder.lockCanvas();
         canvas_map.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        // 绘制背景
         paint.setColor(Color.GRAY);
         paint.setAlpha(150);
         canvas_map.drawRect(0,0,290,195,paint);
+        // 绘制rt坐标
         paint.setColor(Color.YELLOW);
-        canvas_map.drawCircle(x, y, 5, paint);
-        // canvas_map.drawCircle(y, y, 5, paint);
+        for (int i=0;i<rtlist.size();i+=2) {
+            canvas_map.drawCircle(rtlist.get(i), rtlist.get(i+1), 5, paint);
+        }
         bholder.unlockCanvasAndPost(canvas_map);
     }
 //    public void doDraws(Bitmap bmp) {
@@ -440,8 +443,18 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
                     int dip = 100;
                     if (x > 0) { x *= dip;} else {x *= -dip;};
                     if (y > 0) { y *= dip;} else {y *= -dip;};
-                    paintRT(x,y);
-                    Log.i("kais", "rt");
+                    // 将坐标保存到数组中
+                    //rtlist.add(String.valueOf(x));
+                    //rtlist.add(String.valueOf(y));
+                    rtlist.add(x);
+                    rtlist.add(y);
+                    paintRT();
+                    //addRT(String.valueOf(x),String.valueOf(y));
+                    // 打印保存在数组里的值
+                    // Log.i("kais_rt", String.valueOf(rtlist));
+                    // paintRT(x,y);
+                    // 打印接收的值
+                    // Log.i("kais", x+" "+y);
                 } else {
                     // 结果为PNG
                     Bitmap bitmap = BitmapFactory.decodeByteArray(nowPoint, 0, nowPoint.length);
@@ -457,11 +470,21 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
                                 }
                             }
                         });
-                        Log.i("kais", "bit");
+                        // Log.i("kais", "bit");
                     }
                 }
             }
         }
+        // 绘制RT
+        //if (rtlist.size()!=0) {
+            //float x = rtlist.get(0);
+            //float y = rtlist.get(1);
+            //Log.i("kai-rt", String.valueOf(rtlist));
+            // paintRT(x,y);
+            // rtlist.remove(x);
+            // rtlist.remove(y);
+        //}
+
 //            if (variableClass.socketClientClass.response != null) {
 //                Bitmap bitmap = variableClass.socketClientClass.response;
 //                runOnUiThread(new Runnable() {
@@ -511,6 +534,19 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         //}
         return mRgba;
     }
+    // String[] rtArr = new String[0];
+    List<Float> rtlist = new ArrayList<>();
+    //创建一个可以在数组末尾添加元素的方法
+//    public void addRT(String x,String y) {
+//        String[] array=new String[rtArr.length+2]; //创建一个新数组
+//        for(int i=0;i<rtArr.length;i++) {
+//            array[i]=rtArr[i];
+//        }
+//        //将新元素添加到新数组
+//        array[rtArr.length]=x;
+//        array[rtArr.length+1]=y;
+//        rtArr=array;
+//    }
 
     // 判断是png还是rt
     public String whatType(String str) {
