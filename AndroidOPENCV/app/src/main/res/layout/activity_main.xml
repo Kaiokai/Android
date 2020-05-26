@@ -8,117 +8,90 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <org.opencv.android.JavaCameraView
-            android:id="@+id/fd_activity_surface_view"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <com.android.opencv.MySurfaceView
-            android:id="@+id/mysurfaceview"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
+            <org.opencv.android.JavaCameraView
+                android:id="@+id/fd_activity_surface_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/send"
-            app:layout_constraintHorizontal_bias="0.694"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            tools:ignore="MissingConstraints" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/connect"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:text="@string/button01"
-            app:layout_constraintBottom_toTopOf="@+id/guideline"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/guideline5"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
+            <com.android.opencv.MySurfaceView
+                android:id="@+id/mysurfaceview"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="MissingConstraints" />
 
-        <Button
-            android:id="@+id/disconnect"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:text="@string/button02"
-            app:layout_constraintBottom_toTopOf="@+id/guideline2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline5"
-            app:layout_constraintTop_toTopOf="@+id/guideline" />
+            <com.android.opencv.MySurfaceView
+                android:id="@+id/mymap"
+                android:layout_width="290dp"
+                android:layout_height="195dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="MissingConstraints" />
 
-        <Button
-            android:id="@+id/send"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:text="@string/button03"
-            app:layout_constraintBottom_toTopOf="@+id/guideline3"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline5"
-            app:layout_constraintTop_toTopOf="@+id/guideline2" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <Button
-            android:id="@+id/getmes"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:text="@string/button04"
-            app:layout_constraintBottom_toTopOf="@+id/guideline4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline5"
-            app:layout_constraintTop_toTopOf="@+id/guideline3" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.15" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.3" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.45" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.6" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.82" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="139dp"
-            android:layout_height="133dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.989"
-            app:layout_constraintStart_toStartOf="@+id/guideline5"
-            app:layout_constraintTop_toTopOf="@+id/guideline4"
-            app:layout_constraintVertical_bias="0.483"
-            app:srcCompat="?android:attr/listChoiceIndicatorSingle" />
+            app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <Button
+                android:id="@+id/connect"
+                android:layout_width="100dp"
+                android:layout_height="60dp"
+                android:text="@string/button01" />
+
+            <Button
+                android:id="@+id/getmes"
+                android:layout_width="100dp"
+                android:layout_height="60dp"
+                android:text="@string/button04" />
+
+            <Button
+                android:id="@+id/send"
+                android:layout_width="100dp"
+                android:layout_height="60dp"
+                android:text="@string/button03" />
+
+            <Button
+                android:id="@+id/disconnect"
+                android:layout_width="100dp"
+                android:layout_height="60dp"
+                android:text="@string/button02" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

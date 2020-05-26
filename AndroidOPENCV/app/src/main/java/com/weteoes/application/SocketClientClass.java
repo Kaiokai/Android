@@ -25,7 +25,6 @@ public class SocketClientClass extends SocketClass {
     public boolean socketSendWhile = false; // 是否正在循环
     public boolean socketSendNext = true; // 是否发送下一个数据
     public List<byte[]> socketSendDataList = new ArrayList<>();
-    public Bitmap response;
 
     // 连接
     public boolean a_connect() {
@@ -93,30 +92,34 @@ public class SocketClientClass extends SocketClass {
         }
         socketSendNext = true;
         // String 转 Bitmap
-//        try {
-//            // string To Bytes
-//            byte[] a = data.getBytes("ISO-8859-1");
-//            // Bytes To Bitmap
-//            response = BitmapFactory.decodeByteArray(a,0,a.length);
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
-        //SurfaceDrawVariableClass.pointList.add(data);
-        // 保存
         try {
+            if (data.substring(0,7).equals("|start|")) {
+                data = data.substring(data.indexOf("_")+1);
+            }
+            // string To Bytes
             byte[] a = data.getBytes("ISO-8859-1");
-            String sdCardDir = Environment.getExternalStorageDirectory() + "/Weteoes/camera/socketPoint";
-            File dirFile = new File(sdCardDir);
-            dirFile.mkdirs();
-            File file = new File(sdCardDir, i + ".png");
-            i++;
-            FileOutputStream out = new FileOutputStream(file);
-            out.write(a,0, a.length);
-            out.flush();
-            out.close();
-        } catch (Exception e) {
+            // Bytes To Bitmap
+            variableClass.socketPngByte.add(a);
+            //response = BitmapFactory.decodeByteArray(a,0, a.length);
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        //SurfaceDrawVariableClass.pointList.add(data);
+        // 保存
+//        try {
+//            byte[] a = data.getBytes("ISO-8859-1");
+//            String sdCardDir = Environment.getExternalStorageDirectory() + "/Weteoes/camera/socketPoint";
+//            File dirFile = new File(sdCardDir);
+//            dirFile.mkdirs();
+//            File file = new File(sdCardDir, i + ".png");
+//            i++;
+//            FileOutputStream out = new FileOutputStream(file);
+//            out.write(a,0, a.length);
+//            out.flush();
+//            out.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
     // 循环发送
     @Override

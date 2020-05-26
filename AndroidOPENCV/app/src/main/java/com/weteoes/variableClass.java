@@ -9,15 +9,18 @@ import com.android.opencv.MainActivity;
 import com.weteoes.application.SocketClientClass;
 import com.weteoes.model.MessageClass;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 public class variableClass {
     public static SocketClientClass socketClientClass = new SocketClientClass();
     public static MessageClass messageClass = new MessageClass();
+    public static List<byte[]> socketPngByte = new ArrayList<>();
 
     public static Activity activity; // 窗口
     public static com.android.opencv.MainActivity mainActivity; // 窗口class
     public static DisplayMetrics activitySize; // 窗口Size
-    public static String SteingEncode = "gb2312";
-
 
 
     public final static int handler_Toast = 1;

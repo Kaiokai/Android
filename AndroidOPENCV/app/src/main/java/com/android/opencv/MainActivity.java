@@ -5,14 +5,10 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 //import org.opencv.core.Core;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -22,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
@@ -35,7 +32,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -47,13 +43,13 @@ import androidx.annotation.RequiresApi;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executors;
+
 import com.weteoes.variableClass;
+
 import static org.opencv.imgcodecs.Imgcodecs.imwrite;
 
 public class MainActivity extends Activity implements CvCameraViewListener2 {
@@ -85,12 +81,14 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     public ImageView iv;
 
     // SurfaceView
-    public MySurfaceView mysv;
-    public SurfaceHolder mholder;
-    public boolean isRunning;
-    public Bitmap bmpStatus;
-    public Canvas canvas;
+    public MySurfaceView mysv, mymap;
+    public SurfaceHolder mholder, bholder;
+    public boolean isRunning,isRunning_map;
+    public Bitmap bmpStatus, bmpStatus_map;
+    public Canvas canvas, canvas_map;
     Bitmap bitmap;
+    Paint paint;
+    int mapWidth,mapHeight;
 
     /**
      * Called when the activity is first created.
@@ -123,10 +121,19 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         btnDisConnect = findViewById(R.id.disconnect);
         btnSend = findViewById(R.id.send);
         btnGetMes = findViewById(R.id.getmes);
-        iv = findViewById(R.id.imageView);
+//        iv = findViewById(R.id.imageView);
+        // 特征
         mysv = findViewById(R.id.mysurfaceview);
         mholder = mysv.getHolder();
-        bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.girl);
+
+        // 小地图
+        mymap = findViewById(R.id.mymap);
+        bholder = mymap.getHolder();
+        paint = new Paint();
+        mapWidth = mymap.getWidth();
+        mapHeight = mymap.getHeight();
+
+        //bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.girl);
 
         // SurfaceView
         mholder.addCallback(new SurfaceHolder.Callback() {
@@ -147,6 +154,29 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {
                 isRunning = false;
+            }
+        });
+        // 小地图
+        bholder.addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                //isRunning_map = true;
+                // SvRun_map(bitmap);
+                canvas_map = bholder.lockCanvas();
+                paint.setColor(Color.GRAY);
+                paint.setAlpha(150);
+                canvas_map.drawRect(0,0,290,195,paint);
+                bholder.unlockCanvasAndPost(canvas_map);
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                isRunning_map = false;
             }
         });
 
@@ -207,24 +237,87 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     public void SvRun(Bitmap bmp) {
         while (isRunning) {
             if (bmpStatus != bmp) {
-//                try {
-//                    Thread.sleep(50);
-//                }catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-                Bitmap a = Bitmap.createScaledBitmap(bmp,400,400,true);
-                doDraw(a);
+                doDraw(bmp);
             }
             isRunning = false;
         }
     }
+    // 小地图
+    public void SvRun_map(Bitmap bmp) {
+        isRunning_map = true;
+        while (isRunning_map) {
+            if (bmpStatus_map != bmp) {
+                doDraw_map(bmp);
+            }
+            isRunning_map = false;
+        }
+    }
+
+    //    public void SvRuns(Bitmap bmp) {
+//        while (isRunning) {
+//            if (bmpStatus_map != bmp) {
+////                try {
+////                    Thread.sleep(50);
+////                }catch (Exception e) {
+////                    e.printStackTrace();
+////                }
+//                doDraws(bmp);
+//                //Bitmap a = Bitmap.createScaledBitmap(bmp,400,400,true);
+//                //doDraw(a);
+//            }
+//            isRunning = false;
+//        }
+//    }
+    // 绘制PNG
+//    public void doDraw(Bitmap bmp) {
+//        canvas = mholder.lockCanvas();
+//        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+//        // canvas.drawColor(Color.TRANSPARENT);
+//        canvas.drawBitmap(bmp,0,0,null);
+//        mholder.unlockCanvasAndPost(canvas);
+//    }
+    // 绘制rt坐标
+//    public void paintRT(float x,float y) {
+//        paint = new Paint();
+//        canvas = mholder.lockCanvas();
+//        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+//        paint.setColor(Color.YELLOW);
+//        canvas.drawCircle(x,y,20,paint);
+//        mholder.unlockCanvasAndPost(canvas);
+//    }
+    // 绘制特征
     public void doDraw(Bitmap bmp) {
         canvas = mholder.lockCanvas();
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        // canvas.drawColor(Color.TRANSPARENT);
-        canvas.drawBitmap(bmp,0,0,null);
+        canvas.drawBitmap(bmp, 0, 0, null);
         mholder.unlockCanvasAndPost(canvas);
     }
+    // 小地图
+    public void doDraw_map(Bitmap bmp) {
+        canvas_map = bholder.lockCanvas();
+        // canvas_map.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        canvas_map.drawBitmap(bmp, 0, 0, null);
+        bholder.unlockCanvasAndPost(canvas_map);
+    }
+    // 绘制RT
+    public void paintRT(float x, float y) {
+        canvas_map = bholder.lockCanvas();
+        canvas_map.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        paint.setColor(Color.GRAY);
+        paint.setAlpha(150);
+        canvas_map.drawRect(0,0,290,195,paint);
+        paint.setColor(Color.YELLOW);
+        canvas_map.drawCircle(x, y, 5, paint);
+        // canvas_map.drawCircle(y, y, 5, paint);
+        bholder.unlockCanvasAndPost(canvas_map);
+    }
+//    public void doDraws(Bitmap bmp) {
+//        canvas_map = bholder.lockCanvas();
+//        canvas_map.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+//        canvas_map.drawBitmap(bmp,0,0,null);
+//        bholder.unlockCanvasAndPost(canvas_map);
+//    }
+
 
     @Override
     public void onPause() {
@@ -275,18 +368,17 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
         // 调用socket的发送函数 把图片传过去
         //if (isSend) {
-            // 将mat类型的图片转成bytearray
-            //byte[] pData = new byte[(int) mRgba.total()];
-            //mRgba.get(0, 0, pData);
-            //String pMes = pstart + Arrays.toString(pData) + pend;
-            //saveImageToGallery(matToBitmap(mRgba));
+        // 将mat类型的图片转成bytearray
+        //byte[] pData = new byte[(int) mRgba.total()];
+        //mRgba.get(0, 0, pData);
+        //String pMes = pstart + Arrays.toString(pData) + pend;
+        //saveImageToGallery(matToBitmap(mRgba));
 
 
-            // 生成字符串 加上头尾
-            // String pMes = pstart + Arrays.toString(bytes) + pend;
-            // 调用发送函数
-            // mysocket.sendMesToServer(pstart+toByte()+pend);
-
+        // 生成字符串 加上头尾
+        // String pMes = pstart + Arrays.toString(bytes) + pend;
+        // 调用发送函数
+        // mysocket.sendMesToServer(pstart+toByte()+pend);
 
 
         // 如果当前获取的时间和上一秒保存的时间不同 则执行 每次间隔为1s
@@ -308,32 +400,81 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 //                // 保存时间 用以判断间隔
 //                nowTime = getTime();
 //            }
-            // 延时发送画面
-            try {
-                Thread.sleep(500);
-                if(isSend) {
+
+        // 小地图
+//        Bitmap bmap = Bitmap.createScaledBitmap(matToBitmap(mRgba),290,195,true);
+//        SvRun_map(bmap);
+
+        // 延时发送画面
+        try {
+            //Thread.sleep(500);
+            if (isSend) {
+                if (!(getTime()).equals(nowTime)) {
                     // 发送图像
                     byte[] data = toByte();
                     // 往socketSendDataList内存放Bytes图像
                     variableClass.socketClientClass.socketSendDataList.add(data);
+                    // 保存时间 用以判断间隔
+                    nowTime = getTime();
                 }
-            }catch (InterruptedException e) {
-                e.printStackTrace();
             }
-            // 显示图片--只能在创建View的线程中修改View
-            if (variableClass.socketClientClass.response != null) {
-                Bitmap bitmap = variableClass.socketClientClass.response;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(bitmap!=null) {
-                            // iv.setImageBitmap(bitmap);
-                            isRunning = true;
-                            SvRun(bitmap);
-                        }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 显示图片--只能在创建View的线程中修改View
+        // 01 存放nowPoint的size用于操作byte[]
+        int nowPointSize = variableClass.socketPngByte.size();
+        if (nowPointSize > 0) {
+            byte nowPoint[] = variableClass.socketPngByte.get(nowPointSize - 1);
+            for (int i = nowPointSize - 1; i >= 0; i--) {
+                variableClass.socketPngByte.remove(i);
+            }
+            if (nowPoint != null) {
+                String uomPoint = new String(nowPoint);
+                // 判断接收结果为rt还是png
+                if (whatType(uomPoint).equals("rt")) {
+                    // 结果为RT
+                    float x = Float.parseFloat(uomPoint.substring(3, uomPoint.indexOf("|")));
+                    float y = Float.parseFloat(uomPoint.substring(uomPoint.indexOf("|") + 1, uomPoint.lastIndexOf("|")));
+                    int dip = 100;
+                    if (x > 0) { x *= dip;} else {x *= -dip;};
+                    if (y > 0) { y *= dip;} else {y *= -dip;};
+                    paintRT(x,y);
+                    Log.i("kais", "rt");
+                } else {
+                    // 结果为PNG
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(nowPoint, 0, nowPoint.length);
+                    if (bitmap != null) {
+                        final Bitmap a = Bitmap.createScaledBitmap(bitmap, variableClass.activitySize.widthPixels, variableClass.activitySize.heightPixels, true);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (a != null) {
+                                    // iv.setImageBitmap(bitmap);
+                                    isRunning = true;
+                                    SvRun(a);
+                                }
+                            }
+                        });
+                        Log.i("kais", "bit");
                     }
-                });
+                }
             }
+        }
+//            if (variableClass.socketClientClass.response != null) {
+//                Bitmap bitmap = variableClass.socketClientClass.response;
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if(bitmap!=null) {
+//                            // iv.setImageBitmap(bitmap);
+//                            isRunning = true;
+//                            SvRun(bitmap);
+//                        }
+//                    }
+//                });
+//            }
 
 //            // 获取服务器Png的Bytes
 //            mysocket.getServerBytes();
@@ -371,34 +512,14 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         return mRgba;
     }
 
-    // 将获取的PNG String转Byte 再由byteToBimap转为Bitmap返回
-    public Bitmap drawImage(String str) {
-        //Bitmap bitmap =  Bitmap.createBitmap(480, 640, Bitmap.Config.ARGB_8888);
-        Bitmap bitmap = null;
-        try {
-            // 转为Bytes
-            byte[] byteArr = str.getBytes("ISO-8859-1");
-            if (byteArr.length != 0) {
-                // 转为Bitmap
-                bitmap = byteToBimap(byteArr);
-            }
-            if (bitmap != null) {
-                return bitmap;
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+    // 判断是png还是rt
+    public String whatType(String str) {
+        // `Log.i("zdks",str.substring(0,2));
+        if (str.substring(0, 2).equals("rt")) {
+            return "rt";
+        } else {
+            return "png";
         }
-        return bitmap;
-    }
-    // 接收drawImage的byte[] 转为Bitmap返回
-    public Bitmap byteToBimap(byte[] byteArr) {
-        byte[] bs = byteArr;
-        YuvImage yuvimage=new YuvImage(bs, ImageFormat.NV21, 20,20, null);//20、20分别是图的宽度与高度
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        yuvimage.compressToJpeg(new Rect(0, 0,20, 20), 80, baos);//80--JPG图片的质量[0-100],100最高
-        byte[] jdata = baos.toByteArray();
-        Bitmap bmp = BitmapFactory.decodeByteArray(jdata, 0, jdata.length);
-        return bmp;
     }
 
     // 获取当前时间
@@ -407,8 +528,9 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         String time = stampToDate(timeStamp);
         return time;
     }
+
     // 时间戳转为时间
-    public String stampToDate(long timeMillis){
+    public String stampToDate(long timeMillis) {
         // 设置格式 原始为"SimpleDateFormat("yyyy-MM-dd HH:mm:ss")"
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("ss");
         Date date = new Date(timeMillis);
@@ -416,13 +538,13 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     }
 
     // bitmap转img转byte
-    public byte[] toByte(){
+    public byte[] toByte() {
         // 把Map类型的mRgba转成Bitmap类型
         Bitmap bitmapa = matToBitmap(mRgba);
         // 创建一个ByteArrayOutputStream类型的变量来存放转为jpeg的Bitmap
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         // 转为JPEG 存至baos
-        bitmapa.compress(Bitmap.CompressFormat.JPEG,10, baos);
+        bitmapa.compress(Bitmap.CompressFormat.JPEG, 10, baos);
         // 转为byte[]型
         byte[] bytes = baos.toByteArray();
         // 生成字符串 加上头尾
@@ -430,32 +552,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         //String result = new String(bytes);
         return bytes;
         //return Arrays.toString(bytes);
-    }
-
-    // 合并byte
-    public byte[] byteMerger(byte[] byte_1, byte[] byte_2){
-        byte[] byte_3 = new byte[byte_1.length+byte_2.length];
-        System.arraycopy(byte_1, 0, byte_3, 0, byte_1.length);
-        System.arraycopy(byte_2, 0, byte_3, byte_1.length, byte_2.length);
-        return byte_3;
-    }
-
-    // 保存
-    public void saveByte(byte[] a) {
-        try {
-            String sdCardDir = Environment.getExternalStorageDirectory() + "/Weteoes/opencv/";
-            File dirFile = new File(sdCardDir);
-            if (!dirFile.exists()) {              //如果不存在，那就建立这个文件夹
-                dirFile.mkdirs();
-            }
-            File file = new File(sdCardDir, "test.jpg");
-            FileOutputStream out = new FileOutputStream(file);
-            out.write(a,0, a.length);
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     // mat 转 Bitmap
@@ -482,5 +578,61 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     public void initw() {
         variableClass.activity = this;
         variableClass.mainActivity = this;
+        variableClass.activitySize = getResources().getDisplayMetrics();
     }
+
+    // 合并byte
+//    public byte[] byteMerger(byte[] byte_1, byte[] byte_2) {
+//        byte[] byte_3 = new byte[byte_1.length + byte_2.length];
+//        System.arraycopy(byte_1, 0, byte_3, 0, byte_1.length);
+//        System.arraycopy(byte_2, 0, byte_3, byte_1.length, byte_2.length);
+//        return byte_3;
+//    }
+
+    // 保存
+//    public void saveByte(byte[] a) {
+//        try {
+//            String sdCardDir = Environment.getExternalStorageDirectory() + "/Weteoes/opencv/";
+//            File dirFile = new File(sdCardDir);
+//            if (!dirFile.exists()) {              //如果不存在，那就建立这个文件夹
+//                dirFile.mkdirs();
+//            }
+//            File file = new File(sdCardDir, "test.jpg");
+//            FileOutputStream out = new FileOutputStream(file);
+//            out.write(a, 0, a.length);
+//            out.flush();
+//            out.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    // 接收drawImage的byte[] 转为Bitmap返回
+//    public Bitmap byteToBimap(byte[] byteArr) {
+//        byte[] bs = byteArr;
+//        YuvImage yuvimage = new YuvImage(bs, ImageFormat.NV21, 20, 20, null);//20、20分别是图的宽度与高度
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        yuvimage.compressToJpeg(new Rect(0, 0, 20, 20), 80, baos);//80--JPG图片的质量[0-100],100最高
+//        byte[] jdata = baos.toByteArray();
+//        Bitmap bmp = BitmapFactory.decodeByteArray(jdata, 0, jdata.length);
+//        return bmp;
+//    }
+//    // 将获取的PNG String转Byte 再由byteToBimap转为Bitmap返回
+//    public Bitmap drawImage(String str) {
+//        //Bitmap bitmap =  Bitmap.createBitmap(480, 640, Bitmap.Config.ARGB_8888);
+//        Bitmap bitmap = null;
+//        try {
+//            // 转为Bytes
+//            byte[] byteArr = str.getBytes("ISO-8859-1");
+//            if (byteArr.length != 0) {
+//                // 转为Bitmap
+//                bitmap = byteToBimap(byteArr);
+//            }
+//            if (bitmap != null) {
+//                return bitmap;
+//            }
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        return bitmap;
+//    }
 }
